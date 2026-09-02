@@ -1,15 +1,3 @@
-// Fetch initial global count on page load
-// Get total count on load
-fetch('https://hits.sh/lastdannce-corn-game.count')
-    .then(res => res.text())
-    .then(text => {
-        // Parse raw text response or display directly
-        document.getElementById('cornCount').innerText = text.trim() || 0;
-    })
-    .catch(() => {
-        document.getElementById('cornCount').innerText = 0;
-    });
-
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
@@ -84,12 +72,17 @@ function update() {
         if (!corn.found) {
             corn.found = true;
 
-            // Hits the counter to add +1
-            fetch('https://hits.sh/lastdannce-corn-game.hit')
-                .finally(() => {
-                    alert("YOU FOUND THE BIG CORN! 🌽✨");
-                    window.location.href = "https://lastdannce.carrd.co";
+            // Send event to GoatCounter
+            if (window.goatcounter && window.goatcounter.count) {
+                window.goatcounter.count({
+                    path: 'found-corn',
+                    title: 'Player Won Corn',
+                    event: true,
                 });
+            }
+
+            alert("YOU FOUND THE BIG CORN! 🌽✨");
+            window.location.href = "https://lastdannce.carrd.co";
         }
     }
 
