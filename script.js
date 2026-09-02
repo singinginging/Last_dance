@@ -1,5 +1,16 @@
+// Fetch initial global count on page load
+fetch('https://api.counterapi.dev/v2/lastdance/corns/')
+    .then(res => res.json())
+    .then(data => {
+        // v2 returns the count inside data.up or data.value
+        document.getElementById('cornCount').innerText = data.up || data.value || 0;
+    })
+    .catch(err => console.error("Error fetching count:", err));
+
+
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
+
 
 canvas.width = 800;
 canvas.height = 400;
@@ -66,12 +77,22 @@ function update() {
     });
 
     // Check Corn Win
+// Check Corn Win
     if (player.x < corn.x + corn.w && player.x + player.width > corn.x &&
         player.y < corn.y + corn.h && player.y + player.height > corn.y) {
         if (!corn.found) {
             corn.found = true;
-            alert("YOU FOUND THE BIG CORN! 🌽✨");
-            window.location.href = "https://lastdannce.carrd.co";
+
+            // Increment count using v2 API
+            fetch('https://api.counterapi.dev/v2/lastdance/corns/up')
+                .then(() => {
+                    alert("YOU FOUND THE BIG CORN! 🌽✨");
+                    window.location.href = "https://lastdannce.carrd.co";
+                })
+                .catch(() => {
+                    // Redirect even if the network call fails
+                    window.location.href = "https://lastdannce.carrd.co";
+                });
         }
     }
 
